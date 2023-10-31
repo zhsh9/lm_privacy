@@ -144,7 +144,9 @@ dependencies:
     - thinc==8.0.2
     - tokenizers==0.10.1
     - toml==0.10.2
-    - torch==1.8.0
+    - torch==1.7.1
+    - torchvision==0.8.2
+    - cudatoolkit==11.0
     - torchvision==0.9.0
     - tqdm==4.49.0
     - transformers==4.3.3
