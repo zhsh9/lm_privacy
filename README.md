@@ -22,7 +22,8 @@ pe.py is the to-do my own privacy engine
 ```
 # git clone the repo first
 # create an environment called "privacy"
-conda env create -f environment.yml
+# conda env create -f environment.yml
+conda env create -f nlp.yml
 
 # just in case, permission to execute the file
 chmod +x env_transfer.sh
@@ -31,14 +32,16 @@ chmod +x env_transfer.sh
 ./env_transfer.sh
 
 # install the correct torch version
-pip uninstall torch
-pip install torch==1.7.1
+# pip uninstall torch
+# pip install torch==1.7.1
+# nlp.yaml does not need this.
 
 # As a quick fix to achieve the selective dp, simply copy privacy_engine.py in this git repo to the privacy_engine in opacus (usually it's in ~/anaconda3/envs/privacy/lib/python3.8/site-packages/opacus/privacy_engine.py), should import in the future.
 # first make a copy of the original privacy_engine.py
 mv ~/miniconda3/envs/privacy/lib/python3.8/site-packages/opacus/privacy_engine.py ~/miniconda3/envs/privacy/lib/python3.8/site-packages/opacus/privacy_engine_original.py
 # then copy the privacy_engine.py
 cp privacy_engine.py ~/miniconda3/envs/privacy/lib/python3.8/site-packages/opacus/privacy_engine.py
+# use miniconda3 instead of anaconda3
 ```
 
 ## For the dialogue system task: how to get the CUSTOMERSIM dataset
@@ -60,28 +63,28 @@ python multiple_domains.py --domain track_package --complexity mix --train_size 
 ```
 ## language modeling, data = "data/wikitext-2-add10b"
 # SDPSGD, turn both `-dp` and `--partial` on, 
-python -u main.py -bs 7 --lr 0.1 -dp --cuda cuda:6 -partial -norm 1e-3  --sigma 0.5 --seed 0 2>&1 | tee logs/partial_dp/20210421/1021/nohidden_lr0.1_norm1e-3_sigma0.5_seed0 
+python -u main.py -bs 7 --lr 0.1 -dp --cuda cuda:0 -partial -norm 1e-3  --sigma 0.5 --seed 0 2>&1 | tee logs/partial_dp/20210421/1021/nohidden_lr0.1_norm1e-3_sigma0.5_seed0 
 
 # DPSGD, turn only `-dp` on 
-python -u main.py --epochs 100 -bs 7 --lr 0.05 -dp --cuda cuda:1 -norm 0.1 --seed 1111 2>&1 | tee logs/dp/20210424/repeat/lr0.05_sigma0.5_norm0.1_seed1111 
+python -u main.py --epochs 100 -bs 7 --lr 0.05 -dp --cuda cuda:0 -norm 0.1 --seed 1111 2>&1 | tee logs/dp/20210424/repeat/lr0.05_sigma0.5_norm0.1_seed1111 
 
 # No DP
-python -u main.py -bs 16 --lr 20 --data data/wikitext-2-add10b --cuda cuda:1 --seed 0 2>&1 | tee logs/nodp/20210416/2354/bs16_see0.log
+python -u main.py -bs 16 --lr 20 --data data/wikitext-2-add10b --cuda cuda:0 --seed 0 2>&1 | tee logs/nodp/20210416/2354/bs16_see0.log
 
 ## dialogue system, data = "data/simdial"
 # SDPSGD, set `--data data/simdial --data_type dial`
 python -u main.py --lr 0.1 --data data/simdial --data_type dial --cuda cuda:0 -dp -partial -bs 3 --sigma 0.7 -norm 5e-3 --epochs 50 2>&1 | tee logs/partial_dp/dialog/20210430/sigma0.7_norm5e-3
 
 # DPSGD
-python -u main.py --lr 0.1 --data data/simdial --data_type dial --cuda cuda:1 -dp -bs 1 --sigma 0.6 -norm 1e-2 --epochs 100 2>&1 | tee logs/dp/dialog/20210430/sigma0.6_norm1e-2_bs1_100epochs
+python -u main.py --lr 0.1 --data data/simdial --data_type dial --cuda cuda:0 -dp -bs 1 --sigma 0.6 -norm 1e-2 --epochs 100 2>&1 | tee logs/dp/dialog/20210430/sigma0.6_norm1e-2_bs1_100epochs
 
 # No DP
-python -u main.py -bs 16 --lr 20 --data data/simdial --data_type dial --cuda cuda:2 --log-interval 10 --seed 123 2>&1 | tee logs/nodp/dialog/20210501/dialog_bs16_seed123.log
+python -u main.py -bs 16 --lr 20 --data data/simdial --data_type dial --cuda cuda:0 --log-interval 10 --seed 123 2>&1 | tee logs/nodp/dialog/20210501/dialog_bs16_seed123.log
 
 
 # missed experiments
 # data sanitization, missed the secret in the canary
-python -u main.py -bs 16 --lr 20 --data data/wikitext-2-add10b-normalized/missing_digits --cuda cuda:3 2>&1 | tee logs/nodp/normalized/20210426/lstm.log
+python -u main.py -bs 16 --lr 20 --data data/wikitext-2-add10b-normalized/missing_digits --cuda cuda:0 2>&1 | tee logs/nodp/normalized/20210426/lstm.log
 
 # SDPSGD, turn on `-missing_digits `
 python -u main.py -bs 7 --lr 0.1 -dp --cuda cuda:0 -partial -norm 1e-3  --sigma 0.5 -missing_digits --data data/wikitext-2-add10b --epochs 100 --seed 1111 2>&1 | tee logs/partial_dp/missed/20210426/lr0.1_sigm0.5_norm1e-3_seed1111_miss10.log
@@ -89,10 +92,10 @@ python -u main.py -bs 7 --lr 0.1 -dp --cuda cuda:0 -partial -norm 1e-3  --sigma 
 
 ## how to run the canary insertion attack
 ```
-python attacks/canary_insertion.py --cuda cuda:4 -bs 256 --checkpoint model/nodp/20210515/122306 --outputf attacks/canary_insertion/nodp_normalized_nomiss/nodp_seed300.csv
+python attacks/canary_insertion.py --cuda cuda:0 -bs 256 --checkpoint model/nodp/20210515/122306 --outputf attacks/canary_insertion/nodp_normalized_nomiss/nodp_seed300.csv
 ```
 
 ## how to run the member inference attack
 ```
-python attacks/mem_inference.py --cuda cuda:4 --data_type doc --data data/wikitext-2-add10b -bs 64 --N 1000 --checkpoint model/nodp/20210515/122306 --outputf attacks/membership_inference/nodp_normalized_nomiss/nodp_seed300.csv
+python attacks/mem_inference.py --cuda cuda:0 --data_type doc --data data/wikitext-2-add10b -bs 64 --N 1000 --checkpoint model/nodp/20210515/122306 --outputf attacks/membership_inference/nodp_normalized_nomiss/nodp_seed300.csv
 ```
