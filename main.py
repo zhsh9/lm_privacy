@@ -160,6 +160,8 @@ torch.manual_seed(args.seed)
 print(f"seed: {args.seed}")
 
 device = torch.device(args.cuda)
+# device = torch.device("cuda:0")
+# device = torch.device("cpu")
     
 
 ###############################################################################
@@ -436,6 +438,7 @@ def evaluate(data_source, privacy_engine=None):
             source = list(map(lambda x: torch.tensor(x[:-1]).type(torch.int64), batch))
             target = list(map(lambda x: torch.tensor(x[1:]).type(torch.int64), batch))
             seq_lens = list(map(lambda x: len(x) - 1, batch))
+            # put into device
             source = pad_sequence(source, batch_first=True, padding_value=PAD_TOKEN_ID).to(device)
             target = pad_sequence(target, batch_first=True, padding_value=PAD_TOKEN_ID).to(device)
             del batch

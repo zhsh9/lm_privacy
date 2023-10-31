@@ -36,9 +36,9 @@ pip install torch==1.7.1
 
 # As a quick fix to achieve the selective dp, simply copy privacy_engine.py in this git repo to the privacy_engine in opacus (usually it's in ~/anaconda3/envs/privacy/lib/python3.8/site-packages/opacus/privacy_engine.py), should import in the future.
 # first make a copy of the original privacy_engine.py
-mv ~/anaconda3/envs/privacy/lib/python3.8/site-packages/opacus/privacy_engine.py ~/anaconda3/envs/privacy/lib/python3.8/site-packages/opacus/privacy_engine_original.py
+mv ~/miniconda3/envs/privacy/lib/python3.8/site-packages/opacus/privacy_engine.py ~/miniconda3/envs/privacy/lib/python3.8/site-packages/opacus/privacy_engine_original.py
 # then copy the privacy_engine.py
-cp privacy_engine.py ~/anaconda3/envs/privacy/lib/python3.8/site-packages/opacus/privacy_engine.py
+cp privacy_engine.py ~/miniconda3/envs/privacy/lib/python3.8/site-packages/opacus/privacy_engine.py
 ```
 
 ## For the dialogue system task: how to get the CUSTOMERSIM dataset
