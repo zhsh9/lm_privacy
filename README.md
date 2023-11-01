@@ -23,7 +23,11 @@ pe.py is the to-do my own privacy engine
 # git clone the repo first
 # create an environment called "privacy"
 # conda env create -f environment.yml
-conda env create -f nlp.yml
+conda env create -f nlp.yaml
+
+# for installing cudatoolkit if cudatoolkit has something wrong with it.
+conda activate privacy
+conda conda install pytorch==1.7.1 cudatoolkit=11.0 -c pytorch
 
 # just in case, permission to execute the file
 chmod +x env_transfer.sh
